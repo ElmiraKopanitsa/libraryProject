@@ -1,5 +1,7 @@
 package kz.itgirl.libraryproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import kz.itgirl.libraryproject.view.Views;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -10,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
+@JsonView(Views.Private.class)
 public class GenreDto {
 
     private Long id;

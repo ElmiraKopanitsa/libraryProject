@@ -27,6 +27,5 @@ public class BookServiceImpl implements BookService{
                         .id(book.getId())
                         .build())
                 .toList();
-
     }
 }

@@ -45,6 +45,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.ainrif.apiator</groupId>
+			<artifactId>jakson-plugin-core-json-renderer</artifactId>
+			<version>0.15.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
