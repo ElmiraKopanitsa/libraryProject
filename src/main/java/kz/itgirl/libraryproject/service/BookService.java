@@ -2,6 +2,7 @@ package kz.itgirl.libraryproject.service;
 
 import kz.itgirl.libraryproject.dto.BookCreateDto;
 import kz.itgirl.libraryproject.dto.BookDto;
+import kz.itgirl.libraryproject.dto.BookUpdateDto;
 
 public interface BookService {
 
@@ -12,4 +13,8 @@ public interface BookService {
     BookDto getByNameV3(String name);
 
     BookDto createBook(BookCreateDto bookCreateDto);
+
+    BookDto updateBook(BookUpdateDto bookUpdateDto);
+
+    String deleteBook(Long id);
 }

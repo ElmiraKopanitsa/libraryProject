@@ -3,6 +3,7 @@ package kz.itgirl.libraryproject.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import kz.itgirl.libraryproject.dto.BookCreateDto;
 import kz.itgirl.libraryproject.dto.BookDto;
+import kz.itgirl.libraryproject.dto.BookUpdateDto;
 import kz.itgirl.libraryproject.service.BookService;
 import kz.itgirl.libraryproject.view.Views;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,15 @@ public class BookController {
     @PostMapping("/book/create")
     BookDto createBook(@RequestBody BookCreateDto bookCreateDto) {
         return bookService.createBook(bookCreateDto);
+    }
+
+    @PutMapping("/book/update")
+    BookDto updateBook(@RequestBody BookUpdateDto bookUpdateDto) {
+        return bookService.updateBook(bookUpdateDto);
+    }
+
+    @DeleteMapping("/book/delete/{id}")
+    String deleteBook(@PathVariable("id") Long id) {
+        return bookService.deleteBook(id);
     }
 }

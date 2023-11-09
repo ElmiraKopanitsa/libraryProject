@@ -2,6 +2,7 @@ package kz.itgirl.libraryproject.service;
 
 import kz.itgirl.libraryproject.dto.BookCreateDto;
 import kz.itgirl.libraryproject.dto.BookDto;
+import kz.itgirl.libraryproject.dto.BookUpdateDto;
 import kz.itgirl.libraryproject.model.Author;
 import kz.itgirl.libraryproject.model.Book;
 import kz.itgirl.libraryproject.model.Genre;
@@ -44,19 +45,73 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto createBook(BookCreateDto bookCreateDto) {
-        Book book = bookRepository.save(convertDtoTooEntity(bookCreateDto));
-        return convertEntityToDto(book);
+
+        Book existingBook = bookRepository.findBookByName(
+                        bookCreateDto.getName()).orElse(null);
+        if(existingBook == null) {
+            Book book = bookRepository.save(convertDtoTooEntity(bookCreateDto));
+            return convertEntityToDto(book);
+        }
+        return convertEntityToDto(existingBook);
+    }
+
+    @Override
+    public BookDto updateBook(BookUpdateDto bookUpdateDto) {
+        Genre genre = getGenre(bookUpdateDto);
+        Set<Author> authorSet = getAuthors(bookUpdateDto);
+        Book book = bookRepository.findById(bookUpdateDto.getId()).orElseThrow();
+        book.setName(bookUpdateDto.getName());
+        book.setGenre(genre);
+        book.setAuthors(authorSet);
+        Book newBook = bookRepository.save(book);
+        return convertEntityToDto(newBook);
+    }
+
+    @Override
+    public String deleteBook(Long id) {
+        bookRepository.deleteById(id);
+        return "Book removed.";
     }
 
     public Book convertDtoTooEntity(BookCreateDto bookCreateDto) {
-        Genre genre = genreRepository.findByName(bookCreateDto.getGenre())
+        Genre genre = getGenre(bookCreateDto);
+        Set<Author> authorSet = getAuthors(bookCreateDto);
+
+        return Book.builder()
+                .name(bookCreateDto.getName())
+                .genre(genre)
+                .authors(authorSet)
+                .build();
+    }
+
+    private BookDto convertEntityToDto(Book book) {
+        return BookDto.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .genre(book.getGenre().getName())
+                .build();
+    }
+
+    private Genre getGenre(BookCreateDto bookCreateDto) {
+      return genreRepository.findByName(bookCreateDto.getGenre())
                 .orElseGet(() -> {
                     Genre newGenre = Genre.builder().name(bookCreateDto.getGenre()).build();
                     genreRepository.save(newGenre); // Сохраняем новый жанр в базе данных
                     return newGenre;
                 });
+    }
 
-        Set<Author> authorSet = bookCreateDto.getAuthors().stream()
+    private Genre getGenre(BookUpdateDto bookUpdateDto) {
+        return genreRepository.findByName(bookUpdateDto.getGenre())
+                .orElseGet(() -> {
+                    Genre newGenre = Genre.builder().name(bookUpdateDto.getGenre()).build();
+                    genreRepository.save(newGenre); // Сохраняем новый жанр в базе данных
+                    return newGenre;
+                });
+    }
+
+    private Set<Author> getAuthors(BookCreateDto bookCreateDto) {
+        return bookCreateDto.getAuthors().stream()
                 .map(authorDto -> {
                     Author existingAuthor = authorRepository.findByNameAndSurname(
                                     authorDto.getName(), authorDto.getSurname())
@@ -74,20 +129,26 @@ public class BookServiceImpl implements BookService{
                     }
                 })
                 .collect(Collectors.toSet());
-
-        return Book.builder()
-                .name(bookCreateDto.getName())
-                .genre(genre)
-                .authors(authorSet)
-                .build();
     }
 
+    public Set<Author> getAuthors(BookUpdateDto bookUpdateDto) {
+        return bookUpdateDto.getAuthors().stream()
+                .map(authorDto -> {
+                    Author existingAuthor = authorRepository.findByNameAndSurname(
+                                    authorDto.getName(), authorDto.getSurname())
+                            .orElse(null);
 
-    private BookDto convertEntityToDto(Book book) {
-        return BookDto.builder()
-                .id(book.getId())
-                .name(book.getName())
-                .genre(book.getGenre().getName())
-                .build();
+                    if (existingAuthor == null) {
+                        Author newAuthor = Author.builder()
+                                .name(authorDto.getName())
+                                .surname(authorDto.getSurname())
+                                .build();
+                        authorRepository.save(newAuthor); // Сохраняем нового автора в базе данных
+                        return newAuthor;
+                    } else {
+                        return existingAuthor;
+                    }
+                })
+                .collect(Collectors.toSet());
     }
 }
