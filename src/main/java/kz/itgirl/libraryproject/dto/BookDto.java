@@ -16,11 +16,9 @@ import java.util.List;
 public class BookDto {
 
     private Long id;
-
     private String name;
     @JsonView(Views.Internal.class)
     private String genre;
-
     @JsonView(Views.Private.class)
     private List<AuthorDto> authors;
 }

@@ -1,6 +1,7 @@
 package kz.itgirl.libraryproject.service;
 
 import kz.itgirl.libraryproject.dto.AuthorCreateDto;
+import kz.itgirl.libraryproject.dto.AuthorUpdateDto;
 import kz.itgirl.libraryproject.model.Author;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.BookDto;
@@ -46,6 +47,21 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorDto createAuthor(AuthorCreateDto authorCreateDto) {
             Author author = authorRepository.save(convertDtoToEntity(authorCreateDto));
             return convertEntityToDto(author);
+    }
+
+    @Override
+    public AuthorDto updateAuthor(AuthorUpdateDto authorUpdateDto) {
+        Author author = authorRepository.findById(authorUpdateDto.getId()).orElseThrow();
+        author.setName(authorUpdateDto.getName());
+        author.setSurname(authorUpdateDto.getSurname());
+        Author saveAuthor = authorRepository.save(author);
+        return convertEntityToDto(saveAuthor);
+    }
+
+    @Override
+    public String deleteAuthor(Long id) {
+        authorRepository.deleteById(id);
+        return "Author removed.";
     }
 
     public Author convertDtoToEntity(AuthorCreateDto authorCreateDto) {
