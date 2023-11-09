@@ -1,9 +1,5 @@
 package kz.itgirl.libraryproject.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import kz.itgirl.libraryproject.dto.BookDto;
 import kz.itgirl.libraryproject.model.Book;
 import kz.itgirl.libraryproject.repository.BookRepository;
@@ -31,14 +27,8 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto getByNameV3(String name) {
-        Specification<Book> specification = Specification.where(new Specification<Book>() {
-            @Override
-            public Predicate toPredicate(Root<Book> root,
-                                         CriteriaQuery<?> query,
-                                         CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get("name"), name);
-            }
-        });
+        Specification<Book> specification = Specification.where((Specification<Book>)
+                (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name));
         Book book = bookRepository.findOne(specification).orElseThrow();
         return convertEntityToDto(book);
     }

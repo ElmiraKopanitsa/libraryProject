@@ -1,13 +1,9 @@
 package kz.itgirl.libraryproject.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import kz.itgirl.libraryproject.dto.AuthorCreateDto;
 import kz.itgirl.libraryproject.model.Author;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.BookDto;
-import kz.itgirl.libraryproject.model.Book;
 import kz.itgirl.libraryproject.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,47 +19,59 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDto getAuthorById(Long id) {
         Author author = authorRepository.findById(id).orElseThrow();
-        return convertToDto(author);
+        return convertEntityToDto(author);
     }
 
     @Override
     public AuthorDto getAuthorByNameV1(String name) {
         Author author = authorRepository.findAuthorByName(name).orElseThrow();
-        return convertToDto(author);
+        return convertEntityToDto(author);
     }
 
     @Override
     public AuthorDto getAuthorByNameV2(String name) {
         Author author = authorRepository.findAuthorByNameSql(name).orElseThrow();
-        return convertToDto(author);
+        return convertEntityToDto(author);
     }
 
     @Override
     public AuthorDto getAuthorByNameV3(String name) {
-        Specification<Author> specification = Specification.where(new Specification<Author>() {
-            @Override
-            public Predicate toPredicate(Root<Author> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get("name"), name);
-            }
-        });
+        Specification<Author> specification = Specification.where((Specification<Author>)
+                (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name));
         Author author = authorRepository.findOne(specification).orElseThrow();
-        return convertToDto(author);
+        return convertEntityToDto(author);
     }
 
-    private AuthorDto convertToDto(Author author) {
-        List<BookDto> bookDtoList = author.getBooks()
-                .stream()
-                .map(book -> BookDto.builder()
-                        .genre(book.getGenre().getName())
-                        .name(book.getName())
-                        .id(book.getId())
-                        .build()
-                ).toList();
+    @Override
+    public AuthorDto createAuthor(AuthorCreateDto authorCreateDto) {
+            Author author = authorRepository.save(convertDtoToEntity(authorCreateDto));
+            return convertEntityToDto(author);
+    }
+
+    public Author convertDtoToEntity(AuthorCreateDto authorCreateDto) {
+        return  Author.builder()
+                .name(authorCreateDto.getName())
+                .surname(authorCreateDto.getSurname())
+                .build();
+    }
+
+    private AuthorDto convertEntityToDto(Author author) {
+        List<BookDto> bookDtoList = null;
+        if (author.getBooks() != null) {
+            bookDtoList = author.getBooks()
+                    .stream()
+                    .map(book -> BookDto.builder()
+                            .genre(book.getGenre().getName())
+                            .name(book.getName())
+                            .id(book.getId())
+                            .build())
+                    .toList();
+        }
         return AuthorDto.builder()
-                .books(bookDtoList)
                 .id(author.getId())
                 .name(author.getName())
                 .surname(author.getSurname())
+                .books(bookDtoList)
                 .build();
     }
 }

@@ -1,14 +1,12 @@
 package kz.itgirl.libraryproject.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import kz.itgirl.libraryproject.dto.AuthorCreateDto;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.service.AuthorService;
 import kz.itgirl.libraryproject.view.Views;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,4 +34,9 @@ public class AuthorController {
     @JsonView(Views.Internal.class)
     @GetMapping("author/name/v3/{name}")
     AuthorDto getAuthorByNameV3(@PathVariable("name") String name) { return authorService.getAuthorByNameV3(name); }
+
+    @PostMapping("/author/create")
+    AuthorDto createAuthor(@RequestBody AuthorCreateDto authorCreateDto) {
+        return authorService.createAuthor(authorCreateDto);
+    }
 }
