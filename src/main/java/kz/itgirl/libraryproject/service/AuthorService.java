@@ -3,6 +3,7 @@ package kz.itgirl.libraryproject.service;
 import kz.itgirl.libraryproject.dto.AuthorCreateDto;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.AuthorUpdateDto;
+import java.util.List;
 
 public interface AuthorService {
 
@@ -19,4 +20,6 @@ public interface AuthorService {
     AuthorDto updateAuthor(AuthorUpdateDto authorUpdateDto);
 
     String deleteAuthor(Long id);
+
+    List<AuthorDto> getAllAuthors();
 }

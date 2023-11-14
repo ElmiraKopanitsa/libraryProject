@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,12 @@ public class AuthorServiceImpl implements AuthorService {
     public String deleteAuthor(Long id) {
         authorRepository.deleteById(id);
         return "Author removed.";
+    }
+
+    @Override
+    public List<AuthorDto> getAllAuthors() {
+        List<Author> authorList = authorRepository.findAll();
+        return authorList.stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
     public Author convertDtoToEntity(AuthorCreateDto authorCreateDto) {
