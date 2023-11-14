@@ -1,4 +1,4 @@
-package kz.itgirl.libraryproject.controller;
+package kz.itgirl.libraryproject.controller.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import kz.itgirl.libraryproject.dto.GenreDto;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class GenreController {
+public class GenreRestController {
 
     private final GenreService genreService;
 

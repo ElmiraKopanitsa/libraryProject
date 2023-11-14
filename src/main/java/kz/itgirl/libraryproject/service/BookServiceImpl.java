@@ -12,6 +12,7 @@ import kz.itgirl.libraryproject.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -82,6 +83,12 @@ public class BookServiceImpl implements BookService{
                 .genre(genre)
                 .authors(authorSet)
                 .build();
+    }
+
+    @Override
+    public List<BookDto> getAllBooks() {
+        List<Book> bookList = bookRepository.findAll();
+        return bookList.stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
     private BookDto convertEntityToDto(Book book) {

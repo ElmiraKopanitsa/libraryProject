@@ -1,4 +1,4 @@
-package kz.itgirl.libraryproject.controller;
+package kz.itgirl.libraryproject.controller.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import kz.itgirl.libraryproject.dto.AuthorCreateDto;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthorController {
+public class AuthorRestController {
 
     private final AuthorService authorService;
 
