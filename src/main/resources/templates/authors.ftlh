@@ -10,12 +10,19 @@
             <div class="col col-1">ID</div>
             <div class="col col-2">NAME</div>
             <div class="col col-3">SURNAME</div>
+            <div class="col col-3">BOOKS</div>
         </li>
         <#list authors as author>
             <li class="table-row">
                 <div class="col col-1">${author.id}</div>
                 <div class="col col-2">${author.name}</div>
                 <div class="col col-3">${author.surname}</div>
+                <div class="col col-4">
+                    <#list author.books as book>
+                        <div class="col col-1">${book.name}</div>
+                        <div class="col col-2">${book.genre}</div>
+                    </#list>
+                </div>
             </li>
         </#list>
     </ul>

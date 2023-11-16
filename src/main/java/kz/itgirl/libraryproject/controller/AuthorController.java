@@ -1,6 +1,8 @@
 package kz.itgirl.libraryproject.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import kz.itgirl.libraryproject.service.AuthorService;
+import kz.itgirl.libraryproject.view.Views;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+    @JsonView(Views.Internal.class)
     @GetMapping("/authors")
     String getAuthorsView(Model model) {
         model.addAttribute("authors", authorService.getAllAuthors());

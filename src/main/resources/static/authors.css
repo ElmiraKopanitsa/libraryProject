@@ -23,7 +23,8 @@
      border-radius: 3px;
      padding: 25px 30px;
      display: flex;
-     justify-content: space-between;
+     justify-content: flex-start;
+     align-items: center;
      margin-bottom: 25px;
  }
  .responsive-table .table-header {
@@ -40,8 +41,18 @@
      flex-basis: 10%;
  }
  .responsive-table .col-2 {
-     flex-basis: 40%;
+     flex-basis: 30%;
  }
  .responsive-table .col-3 {
-     flex-basis: 25%;
+     flex-basis: 30%;
  }
+ .responsive-table .col-4 {
+       flex-basis: 30%;
+   }
+.responsive-table .col-1,
+.responsive-table .col-2,
+.responsive-table .col-3,
+.responsive-table .col-4 {
+    flex-grow: 1;
+    text-align: left;
+}
