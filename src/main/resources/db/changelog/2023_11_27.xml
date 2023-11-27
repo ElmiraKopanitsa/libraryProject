@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="create table" author="postgres">
+        <sql>
+
+            Create table if not exists users (
+            id bigserial PRIMARY KEY,
+            name varchar NOT NULL,
+            surname varchar NOT NULL,
+            login varchar NOT NULL,
+            password varchar NOT NULL
+            );
+
+            Create table if not exists roles (
+            id bigserial PRIMARY KEY,
+            role varchar NOT NULL
+            );
+
+            Create table if not exists users_roles (
+            user_id bigint NOT NULL,
+            role_id bigint NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (role_id) REFERENCES roles (id)
+            );
+
+            Insert into roles (role) values
+            ('user'),
+            ('admin'),
+            ('guest');
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>
