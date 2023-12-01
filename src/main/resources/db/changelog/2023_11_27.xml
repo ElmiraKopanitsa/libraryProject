@@ -29,9 +29,9 @@
             );
 
             Insert into roles (role) values
-            ('user'),
-            ('admin'),
-            ('guest');
+            ('ROLE_USER'),
+            ('ROLE_ADMIN'),
+            ('ROLE_GUEST');
 
         </sql>
     </changeSet>
