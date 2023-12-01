@@ -7,6 +7,7 @@ import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.BookDto;
 import kz.itgirl.libraryproject.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,49 +15,68 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
     @Override
     public AuthorDto getAuthorById(Long id) {
+        log.info("Try to find author by id {}", id);
         Author author = authorRepository.findById(id).orElseThrow();
-        return convertEntityToDto(author);
+        AuthorDto authorDto = convertEntityToDto(author);
+        log.info("Find author: {}", authorDto.toString());
+        return authorDto;
     }
 
     @Override
     public AuthorDto getAuthorByNameV1(String name) {
+        log.info("Try to find author by name {}", name);
         Author author = authorRepository.findAuthorByName(name).orElseThrow();
-        return convertEntityToDto(author);
+        AuthorDto authorDto = convertEntityToDto(author);
+        log.info("Find author: {}", authorDto.toString());
+        return authorDto;
     }
 
     @Override
     public AuthorDto getAuthorByNameV2(String name) {
+        log.info("Try to find author by name {}", name);
         Author author = authorRepository.findAuthorByNameSql(name).orElseThrow();
-        return convertEntityToDto(author);
+        AuthorDto authorDto = convertEntityToDto(author);
+        log.info("Find author: {}", authorDto.toString());
+        return authorDto;
     }
 
     @Override
     public AuthorDto getAuthorByNameV3(String name) {
+        log.info("Try to find author by name {}", name);
         Specification<Author> specification = Specification.where((Specification<Author>)
                 (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name));
         Author author = authorRepository.findOne(specification).orElseThrow();
-        return convertEntityToDto(author);
+        AuthorDto authorDto = convertEntityToDto(author);
+        log.info("Find author: {}", authorDto.toString());
+        return authorDto;
     }
 
     @Override
     public AuthorDto createAuthor(AuthorCreateDto authorCreateDto) {
+            log.info("Try create author: {}", authorCreateDto.toString());
             Author author = authorRepository.save(convertDtoToEntity(authorCreateDto));
-            return convertEntityToDto(author);
+            AuthorDto authorDto = convertEntityToDto(author);
+            log.info("Create author: {}", authorDto.toString());
+            return authorDto;
     }
 
     @Override
     public AuthorDto updateAuthor(AuthorUpdateDto authorUpdateDto) {
+        log.info("Try update author: {}", authorUpdateDto.toString());
         Author author = authorRepository.findById(authorUpdateDto.getId()).orElseThrow();
         author.setName(authorUpdateDto.getName());
         author.setSurname(authorUpdateDto.getSurname());
         Author saveAuthor = authorRepository.save(author);
-        return convertEntityToDto(saveAuthor);
+        AuthorDto authorDto = convertEntityToDto(saveAuthor);
+        log.info("Update author: {}", authorDto.toString());
+        return authorDto;
     }
 
     @Override

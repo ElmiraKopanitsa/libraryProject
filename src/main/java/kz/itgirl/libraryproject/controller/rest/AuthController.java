@@ -1,5 +1,7 @@
 package kz.itgirl.libraryproject.controller.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import kz.itgirl.libraryproject.model.User;
 import kz.itgirl.libraryproject.model.Role;
 import kz.itgirl.libraryproject.dto.LoginDto;
@@ -23,6 +25,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
+@SecurityRequirement(name = "library-users")
 public class AuthController {
 
     @Autowired
@@ -38,7 +41,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity<String> authenticateUser(@RequestBody @Valid LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getLogin(), loginDto.getPassword()));
 
@@ -47,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
+    public ResponseEntity<?> registerUser(@RequestBody @Valid SignUpDto signUpDto){
 
         // add check for username exists in a DB
         if(userRepository.existsByLogin(signUpDto.getLogin())){

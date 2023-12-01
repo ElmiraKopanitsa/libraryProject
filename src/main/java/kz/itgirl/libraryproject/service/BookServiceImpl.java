@@ -10,6 +10,7 @@ import kz.itgirl.libraryproject.repository.AuthorRepository;
 import kz.itgirl.libraryproject.repository.BookRepository;
 import kz.itgirl.libraryproject.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookServiceImpl implements BookService{
 
     private final BookRepository bookRepository;
@@ -26,38 +28,52 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public BookDto getByNameV1(String name) {
+        log.info("Try find book by name {}", name);
         Book book = bookRepository.findBookByName(name).orElseThrow();
-        return convertEntityToDto(book);
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Find book {}", bookDto.toString());
+        return bookDto;
     }
 
     @Override
     public BookDto getByNameV2(String name) {
+        log.info("Try find book by name {}", name);
         Book book = bookRepository.findBookByNameSql(name).orElseThrow();
-        return convertEntityToDto(book);
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Find book {}", bookDto.toString());
+        return bookDto;
     }
 
     @Override
     public BookDto getByNameV3(String name) {
+        log.info("Try find book by name {}", name);
         Specification<Book> specification = Specification.where((Specification<Book>)
                 (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name));
         Book book = bookRepository.findOne(specification).orElseThrow();
-        return convertEntityToDto(book);
+        BookDto bookDto = convertEntityToDto(book);
+        log.info("Find book {}", bookDto.toString());
+        return bookDto;
     }
 
     @Override
     public BookDto createBook(BookCreateDto bookCreateDto) {
-
+        log.info("Try create book: {}", bookCreateDto.toString());
         Book existingBook = bookRepository.findBookByName(
                         bookCreateDto.getName()).orElse(null);
         if(existingBook == null) {
             Book book = bookRepository.save(convertDtoTooEntity(bookCreateDto));
-            return convertEntityToDto(book);
+            BookDto bookDto = convertEntityToDto(book);
+            log.info("Create book: {}", bookDto.toString());
+            return bookDto;
         }
-        return convertEntityToDto(existingBook);
+        BookDto bookDto = convertEntityToDto(existingBook);
+        log.info("Find book: {}", bookDto.toString());
+        return bookDto;
     }
 
     @Override
     public BookDto updateBook(BookUpdateDto bookUpdateDto) {
+        log.info("Try update book: {}", bookUpdateDto.toString());
         Genre genre = getGenre(bookUpdateDto);
         Set<Author> authorSet = getAuthors(bookUpdateDto);
         Book book = bookRepository.findById(bookUpdateDto.getId()).orElseThrow();
@@ -65,7 +81,9 @@ public class BookServiceImpl implements BookService{
         book.setGenre(genre);
         book.setAuthors(authorSet);
         Book newBook = bookRepository.save(book);
-        return convertEntityToDto(newBook);
+        BookDto bookDto = convertEntityToDto(newBook);
+        log.info("Update book: {}", bookDto.toString());
+        return bookDto;
     }
 
     @Override

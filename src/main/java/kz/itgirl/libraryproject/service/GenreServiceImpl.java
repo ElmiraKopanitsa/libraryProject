@@ -6,19 +6,24 @@ import kz.itgirl.libraryproject.dto.GenreDto;
 import kz.itgirl.libraryproject.model.Genre;
 import kz.itgirl.libraryproject.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
     @Override
     public GenreDto getBooksByGenre(Long id) {
+        log.info("Try to find genre by id {}", id);
         Genre genre = genreRepository.findById(id).orElseThrow();
-        return convertToDto(genre);
+        GenreDto genreDto = convertToDto(genre);
+        log.info("Find genre: {}", genreDto.toString());
+        return genreDto;
     }
 
     private GenreDto convertToDto(Genre genre) {

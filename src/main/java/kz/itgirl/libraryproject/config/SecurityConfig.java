@@ -26,7 +26,8 @@ public class SecurityConfig {
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/authors", "/books", "/book").hasRole("USER")
+                        .requestMatchers("/authors", "/books", "/book",
+                                "/author/**", "/book/**", "/genre/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .httpBasic();
         return http.build();

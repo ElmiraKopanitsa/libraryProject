@@ -1,6 +1,8 @@
 package kz.itgirl.libraryproject.controller.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import kz.itgirl.libraryproject.dto.AuthorCreateDto;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.AuthorUpdateDto;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "library-users")
 public class AuthorRestController {
 
     private final AuthorService authorService;
@@ -37,12 +40,12 @@ public class AuthorRestController {
     AuthorDto getAuthorByNameV3(@PathVariable("name") String name) { return authorService.getAuthorByNameV3(name); }
 
     @PostMapping("/author/create")
-    AuthorDto createAuthor(@RequestBody AuthorCreateDto authorCreateDto) {
+    AuthorDto createAuthor(@RequestBody @Valid AuthorCreateDto authorCreateDto) {
         return authorService.createAuthor(authorCreateDto);
     }
 
     @PutMapping("/author/update")
-    AuthorDto updateAuthor(@RequestBody AuthorUpdateDto authorUpdateDto) {
+    AuthorDto updateAuthor(@RequestBody @Valid AuthorUpdateDto authorUpdateDto) {
         return authorService.updateAuthor(authorUpdateDto);
     }
 
