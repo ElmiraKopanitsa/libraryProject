@@ -9,6 +9,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 @Entity
 public class Author {
 

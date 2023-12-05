@@ -62,9 +62,8 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorDto createAuthor(AuthorCreateDto authorCreateDto) {
             log.info("Try create author: {}", authorCreateDto.toString());
             Author author = authorRepository.save(convertDtoToEntity(authorCreateDto));
-            AuthorDto authorDto = convertEntityToDto(author);
-            log.info("Create author: {}", authorDto.toString());
-            return authorDto;
+            log.info("Create author: {}", convertEntityToDto(author).toString());
+            return convertEntityToDto(author);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .build();
     }
 
-    private AuthorDto convertEntityToDto(Author author) {
+    public AuthorDto convertEntityToDto(Author author) {
         List<BookDto> bookDtoList = null;
         if (author.getBooks() != null) {
             bookDtoList = author.getBooks()
