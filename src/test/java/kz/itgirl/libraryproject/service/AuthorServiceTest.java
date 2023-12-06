@@ -3,16 +3,17 @@ package kz.itgirl.libraryproject.service;
 import kz.itgirl.libraryproject.dto.AuthorCreateDto;
 import kz.itgirl.libraryproject.dto.AuthorDto;
 import kz.itgirl.libraryproject.dto.AuthorUpdateDto;
+import kz.itgirl.libraryproject.dto.BookDto;
 import kz.itgirl.libraryproject.model.Author;
 import kz.itgirl.libraryproject.model.Book;
 import kz.itgirl.libraryproject.repository.AuthorRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.domain.Specification;
 import java.util.*;
+import java.util.stream.Collectors;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -71,6 +72,41 @@ public class AuthorServiceTest {
         when(authorRepository.findAuthorByName(name)).thenReturn(Optional.empty());
         Assertions.assertThrows(NoSuchElementException.class, () -> authorService.getAuthorByNameV1(name));
         verify(authorRepository).findAuthorByName(name);
+    }
+
+    @Test
+    public void testGetAuthorByNameV3() {
+        Long id = 1L;
+        String name = "Александр";
+        String surname = "Пушкин";
+        Set<Book> book = new HashSet<>();
+        Author author = new Author(id, name, surname, book);
+
+        Specification<Author> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("name"), name);
+
+        when(authorRepository.findOne(any(Specification.class))).thenReturn(Optional.of(author));
+        AuthorDto authorDto = authorService.getAuthorByNameV3(name);
+        verify(authorRepository).findOne(any(Specification.class));
+        Assertions.assertEquals(author.getId(), authorDto.getId());
+        Assertions.assertEquals(author.getName(), authorDto.getName());
+    }
+
+    @Test
+    public void testGetAuthorByNameV3Failed() {
+        Long id = 1L;
+        String name = "Александр";
+        String surname = "Пушкин";
+        Set<Book> book = new HashSet<>();
+        Author author = new Author(id, name, surname, book);
+
+        Specification<Author> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("name"), name);
+
+        when(authorRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
+
+       Assertions.assertThrows(NoSuchElementException.class, () -> authorService.getAuthorByNameV3(name));
+        verify(authorRepository).findOne(any(Specification.class));
     }
 
     @Test
@@ -146,5 +182,45 @@ public class AuthorServiceTest {
         String result = authorService.deleteAuthor(id);
         verify(authorRepository).deleteById(id);
         Assertions.assertEquals(delete, result);
+    }
+
+    @Test
+    public void testGetAllAuthors() {
+        Long id =1L;
+        String name = "John";
+        String surname = "Doe";
+        Set<Book> book = new HashSet<>();
+        Author author = new Author(id, name, surname, book);
+
+        List<Author> authorList = new ArrayList<>();
+        authorList.add(author);
+
+        when(authorRepository.findAll()).thenReturn(authorList);
+        List<AuthorDto> expectedAuthorDtoList = authorList.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+        List<AuthorDto> authorDtoList = authorService.getAllAuthors();
+        verify(authorRepository).findAll();
+        Assertions.assertEquals(expectedAuthorDtoList, authorDtoList);
+    }
+
+    private AuthorDto convertEntityToDto(Author author) {
+        List<BookDto> bookDtoList = null;
+        if (author.getBooks() != null) {
+            bookDtoList = author.getBooks()
+                    .stream()
+                    .map(book -> BookDto.builder()
+                            .genre(book.getGenre().getName())
+                            .name(book.getName())
+                            .id(book.getId())
+                            .build())
+                    .toList();
+        }
+        return AuthorDto.builder()
+                .id(author.getId())
+                .name(author.getName())
+                .surname(author.getSurname())
+                .books(bookDtoList)
+                .build();
     }
 }
