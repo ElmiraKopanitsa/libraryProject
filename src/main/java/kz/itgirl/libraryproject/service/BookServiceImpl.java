@@ -92,7 +92,13 @@ public class BookServiceImpl implements BookService{
         return "Book removed.";
     }
 
-    public Book convertDtoTooEntity(BookCreateDto bookCreateDto) {
+    @Override
+    public List<BookDto> getAllBooks() {
+        List<Book> bookList = bookRepository.findAll();
+        return bookList.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+    }
+
+    private Book convertDtoTooEntity(BookCreateDto bookCreateDto) {
         Genre genre = getGenre(bookCreateDto);
         Set<Author> authorSet = getAuthors(bookCreateDto);
 
@@ -101,12 +107,6 @@ public class BookServiceImpl implements BookService{
                 .genre(genre)
                 .authors(authorSet)
                 .build();
-    }
-
-    @Override
-    public List<BookDto> getAllBooks() {
-        List<Book> bookList = bookRepository.findAll();
-        return bookList.stream().map(this::convertEntityToDto).collect(Collectors.toList());
     }
 
     private BookDto convertEntityToDto(Book book) {
