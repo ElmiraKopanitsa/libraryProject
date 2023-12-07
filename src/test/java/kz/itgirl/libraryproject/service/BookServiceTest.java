@@ -36,7 +36,7 @@ public class BookServiceTest {
     BookServiceImpl bookService;
 
     private Book book;
-    
+
     private AuthorDto authorDto;
 
     @BeforeEach
